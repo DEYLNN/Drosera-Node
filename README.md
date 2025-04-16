@@ -167,12 +167,6 @@ sudo cp drosera-operator /usr/bin
 drosera-operator
 ```
 ## 3. Run Node
-```console
-# Stop node
-sudo systemctl stop drosera
-
-# Restart node
-sudo systemctl restart drosera
 ```bash
 drosera-operator node \
   --db-file-path "$HOME/.drosera.db" \
