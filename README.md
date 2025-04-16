@@ -1,4 +1,5 @@
-# Drosera-Network
+# Drosera-Network Installing only free VPS (github space , replit , google clone , etc)
+If you want install on VPS use tutorial from [0xmoei](https://github.com/0xmoei/Drosera-Network)
 In this Guide, we contribute to Drosera testnet by:
 1. Installing the CLI
 2. Setting up a vulnerable contract
@@ -13,35 +14,6 @@ In this Guide, we contribute to Drosera testnet by:
 Official [Discord](https://discord.gg/UXAdpTYjgr)
 
 ### Install Dependecies
-```
-sudo apt-get update && sudo apt-get upgrade -y
-```
-```
-sudo apt install curl ufw iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip libleveldb-dev  -y
-```
-Docker:
-```bash
-sudo apt update -y && sudo apt upgrade -y
-for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
-
-sudo apt-get update
-sudo apt-get install ca-certificates curl gnupg
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
-
-echo \
-  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-sudo apt update -y && sudo apt upgrade -y
-
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-# Test Docker
-sudo docker run hello-world
-```
 
 <h1 align="center">Trap Setup</h1>
 
@@ -51,8 +23,11 @@ sudo docker run hello-world
 curl -L https://app.drosera.io/install | bash
 ```
 ```
-source /root/.bashrc
+source /home/<username>/.bashrc
 ```
+Change your <username>
+OR you can see this command from detected after installing
+![image](https://github.com/user-attachments/assets/6910ffe7-5d45-4a64-8cf9-4b84e370c9f8)
 ```
 droseraup
 ```
@@ -62,8 +37,11 @@ droseraup
 curl -L https://foundry.paradigm.xyz | bash
 ```
 ```
-source /root/.bashrc
+source /home/<username>/.bashrc
 ```
+Change your <username>
+OR you can see this command from detected after installing
+![image](https://github.com/user-attachments/assets/6910ffe7-5d45-4a64-8cf9-4b84e370c9f8)
 ```
 foundryup
 ```
@@ -138,6 +116,9 @@ drosera dryrun
 ## 1. Whitelist Your Operator
 **1- Edit Trap configuration:**
 ```bash
+cd ~
+```
+```bash
 cd my-drosera-trap
 nano drosera.toml
 ```
@@ -154,6 +135,8 @@ whitelist = ["Operator_Address"]
 DROSERA_PRIVATE_KEY=xxx drosera apply
 ```
 * Replace `xxx` with your EVM wallet `privatekey`
+IF found error wait a minutes, because cooldown
+![image](https://github.com/user-attachments/assets/49fccc1c-7a25-4b63-bc3d-0daf47c4c04f)
 
 Your Trap should be private now with your operator address whitelisted internally.
 
@@ -183,101 +166,35 @@ sudo cp drosera-operator /usr/bin
 # Check if it is working
 drosera-operator
 ```
-
-## 3. Install Docker image
-```
-# Optional: we don't install using docker
-docker pull ghcr.io/drosera-network/drosera-operator:latest
-```
-
----
-
-## 4. Register Operator
-```bash
-drosera-operator register --eth-rpc-url https://ethereum-holesky-rpc.publicnode.com --eth-private-key PV_KEY
-```
-* Replace `PV_KEY` with your Drosera EVM `privatekey`. We use the same wallet as our trap wallet.
-
----
-
-## 5. Create Operator systemd
-Enter this command in the terminal, But first replace:
-* `PV_KEY` with your `privatekey`
-* `VPS_IP` with your solid vps IP (without anything else)
-* if using a `local` system, then replace vps ip with `localhost`
-```bash
-sudo tee /etc/systemd/system/drosera.service > /dev/null <<EOF
-[Unit]
-Description=drosera node service
-After=network-online.target
-
-[Service]
-User=$USER
-Restart=always
-RestartSec=15
-LimitNOFILE=65535
-ExecStart=$(which drosera-operator) node --db-file-path $HOME/.drosera.db --network-p2p-port 31313 --server-port 31314 \
-    --eth-rpc-url https://ethereum-holesky-rpc.publicnode.com \
-    --eth-backup-rpc-url https://1rpc.io/holesky \
-    --drosera-address 0xea08f7d533C2b9A62F40D5326214f39a8E3A32F8 \
-    --eth-private-key PV_KEY \
-    --listen-address 0.0.0.0 \
-    --network-external-p2p-address VPS_IP \
-    --disable-dnr-confirmation true
-
-[Install]
-WantedBy=multi-user.target
-EOF
-```
-
----
-
-## 6. Open Ports
-```bash
-# Enable firewall
-sudo ufw allow ssh
-sudo ufw allow 22
-sudo ufw enable
-
-# Allow Drosera ports
-sudo ufw allow 31313/tcp
-sudo ufw allow 31314/tcp
-```
-
----
-
-## 7. Run Operator
-```console
-# reload systemd
-sudo systemctl daemon-reload
-sudo systemctl enable drosera
-
-# start systemd
-sudo systemctl start drosera
-```
-
----
-
-## 8. Check Node Health
-```
-journalctl -u drosera.service -f
-```
-
-![image](https://github.com/user-attachments/assets/a4ad6e66-4749-4780-9347-c878399d4067)
-
-**!! No problem if you are receiveing `WARN drosera_services::network::service: Failed to gossip message: InsufficientPeers`**
-
----
-
-### Optional commands
+## 3. Run Node
 ```console
 # Stop node
 sudo systemctl stop drosera
 
 # Restart node
 sudo systemctl restart drosera
-```
+```bash
+drosera-operator node \
+  --db-file-path "$HOME/.drosera.db" \
+  --network-p2p-port 31313 \
+  --server-port 31314 \
+  --eth-rpc-url https://ethereum-holesky-rpc.publicnode.com \
+  --eth-backup-rpc-url https://1rpc.io/holesky \
+  --drosera-address 0xea08f7d533C2b9A62F40D5326214f39a8E3A32F8 \
+  --eth-private-key PV_KEY \
+  --listen-address 127.0.0.1 \
+  --network-external-p2p-address 127.0.0.1 \
+  --disable-dnr-confirmation true
 
+```
+ Replace `PV_KEY` with your EVM wallet `privatekey`
+## 8. Check Node Health
+
+![image](https://github.com/user-attachments/assets/a4ad6e66-4749-4780-9347-c878399d4067)
+
+**!! No problem if you are receiveing `WARN drosera_services::network::service: Failed to gossip message: InsufficientPeers`**
+
+---
 ---
 
 ## 9. Opt-in Trap
