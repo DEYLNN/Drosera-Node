@@ -15,7 +15,7 @@ Official [Discord](https://discord.gg/UXAdpTYjgr)
 
 ### Install Dependecies
 
-<h1 align="center">Trap Setup</h1>
+## Trap Setup
 
 ## 1. Configure Enviorments
 **Drosera CLI**:
